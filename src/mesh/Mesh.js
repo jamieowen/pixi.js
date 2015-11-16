@@ -67,6 +67,14 @@ function Mesh(texture, vertices, uvs, indices, drawMode)
      */
     this.blendMode = core.BLEND_MODES.NORMAL;
 
+	/**
+	 * The tint applied to the sprite. This is a hex value. A value of 0xFFFFFF will remove any tint effect.
+	 *
+	 * @member {number}
+	 * @default 0xFFFFFF
+	 */
+	this.tint = 0xFFFFFF;
+
     /**
      * Triangles in canvas mode are automatically antialiased, use this value to force triangles to overlap a bit with each other.
      *

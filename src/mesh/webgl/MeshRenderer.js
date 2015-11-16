@@ -100,6 +100,8 @@ MeshRenderer.prototype.render = function (mesh)
     shader.uniforms.translationMatrix.value = mesh.worldTransform.toArray(true);
     shader.uniforms.projectionMatrix.value = renderer.currentRenderTarget.projectionMatrix.toArray(true);
     shader.uniforms.alpha.value = mesh.worldAlpha;
+	shader.uniforms.tint.value = core.utils.hex2rgb( mesh.tint );
+
 
     shader.syncUniforms();
 
@@ -132,7 +134,6 @@ MeshRenderer.prototype.render = function (mesh)
     }
     else
     {
-
         mesh.dirty = false;
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh._vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, mesh.vertices, gl.STATIC_DRAW);
@@ -177,7 +178,6 @@ MeshRenderer.prototype._initWebGL = function (mesh)
     mesh._vertexBuffer = gl.createBuffer();
     mesh._indexBuffer = gl.createBuffer();
     mesh._uvBuffer = gl.createBuffer();
-
 
 
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh._vertexBuffer);

@@ -31,16 +31,17 @@ function MeshShader(shaderManager)
 
             'varying vec2 vTextureCoord;',
             'uniform float alpha;',
-
+			'uniform vec3 tint;',
             'uniform sampler2D uSampler;',
 
             'void main(void){',
-            '   gl_FragColor = texture2D(uSampler, vTextureCoord) * alpha ;',
+            '   gl_FragColor = vec4( tint, 1.0 ) * texture2D(uSampler, vTextureCoord) * alpha;',
             '}'
         ].join('\n'),
-        // custom uniforms
+        // custom uniforms //texture2D(uSampler, vTextureCoord) * alpha ;
         {
             alpha:  { type: '1f', value: 0 },
+			tint:  { type: '3f', value: 0 },
             translationMatrix: { type: 'mat3', value: new Float32Array(9) },
             projectionMatrix: { type: 'mat3', value: new Float32Array(9) }
         },
