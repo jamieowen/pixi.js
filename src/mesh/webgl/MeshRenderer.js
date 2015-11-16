@@ -44,6 +44,7 @@ function MeshRenderer(renderer)
         this.indices[i + 5] = j + 3;
     }
 
+	this.instances = {};
     this.currentShader = null;
 }
 
@@ -109,7 +110,14 @@ MeshRenderer.prototype.render = function (mesh)
     {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh._vertexBuffer);
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, mesh.vertices);
+
+		if( mesh.instanceId && mesh.instanceIdx === 0 ){
+			gl.bufferSubData(gl.ARRAY_BUFFER, 0, mesh.vertices);
+		}else
+		if( mesh.instanceId === null ){
+			gl.bufferSubData(gl.ARRAY_BUFFER, 0, mesh.vertices);
+		}
+
         gl.vertexAttribPointer(shader.attributes.aVertexPosition, 2, gl.FLOAT, false, 0, 0);
 
         // update the uvs
@@ -130,7 +138,7 @@ MeshRenderer.prototype.render = function (mesh)
         }
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh._indexBuffer);
-        gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, mesh.indices);
+        //gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, mesh.indices);
     }
     else
     {
@@ -174,6 +182,34 @@ MeshRenderer.prototype._initWebGL = function (mesh)
 {
     // build the strip!
     var gl = this.renderer.gl;
+
+	if( mesh.instanceId ){
+
+		var instance = this.instances[mesh.instanceId];
+
+		if( instance ){
+
+			mesh._vertexBuffer = instance.mesh._vertexBuffer;
+			mesh._indexBuffer = instance.mesh._indexBuffer;
+			mesh._uvBuffer = instance.mesh._uvBuffer;
+
+			mesh.vertices = instance.mesh.vertices;
+			mesh.uvs = instance.mesh.uvs;
+			mesh.indices = instance.mesh.indices;
+
+			instance.count++;
+			mesh.instanceIdx = instance.count;
+
+			return;
+		}else{
+			this.instances[mesh.instanceId] = {
+				mesh: mesh,
+				count: 0
+			};
+			mesh.instanceIdx = 0;
+		}
+
+	}
 
     mesh._vertexBuffer = gl.createBuffer();
     mesh._indexBuffer = gl.createBuffer();
